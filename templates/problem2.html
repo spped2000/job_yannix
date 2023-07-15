@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Problem 2</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function isNumericArray(array) {
+            return array.every(function(item) {
+                return !isNaN(item);
+            });
+        }
+
+        $(document).ready(function() {
+            $('#submit-btn').click(function() {
+                var waterHeight = $('#water-height').val();
+                var terrain = $('#terrain').val().split(',').map(Number);
+
+                if (!isNumericArray(terrain)) {
+                    $('#result').text('Please enter a comma-separated list of numbers for terrain.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/problem2',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        'water_height': waterHeight,
+                        'terrain': terrain
+                    }),
+                    success: function(response) {
+                        $('#result').text('Result: ' + response.result);
+                        var plot = 'data:image/png;base64,' + response.plot;
+                        $('#plot').attr('src', plot);
+                    },
+                    error: function() {
+                        $('#result').text('An error occurred.');
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Welcome to Problem 2</h1>
+    <form>
+        <label for="water-height">Water Height: example 11</label><br>
+        <input type="number" id="water-height" name="water-height"><br>
+        <label for="terrain">Terrain (comma-separated numbers): example 1,2,3,4</label><br>
+        <input type="text" id="terrain" name="terrain"><br>
+        <button type="button" id="submit-btn">Submit</button>
+    </form>
+    <p id="result"></p>
+    <img id="plot" src="">
+    <button id="previous" onclick="location.href='/';">Home</button>
+    <button id="next" onclick="location.href='/problem3';">Next</button>
+</body>
+</html>

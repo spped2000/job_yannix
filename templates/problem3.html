@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Problem 3</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function isNumericArray(array) {
+            return array.every(function(item) {
+                return !isNaN(item);
+            });
+        }
+
+        $(document).ready(function() {
+            $('#submit-btn').click(function() {
+                var height = $('#height').val().split(',').map(Number);
+
+                if (!isNumericArray(height)) {
+                    $('#result').text('Please enter a comma-separated list of numbers for height.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/problem3',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        'height': height
+                    }),
+                    success: function(response) {
+                        $('#result').text('Result: ' + response.result);
+                        var plot = 'data:image/png;base64,' + response.plot;
+                        $('#plot').attr('src', plot);
+                    },
+                    error: function() {
+                        $('#result').text('An error occurred.');
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Welcome to Problem 3</h1>
+    <form>
+        <label for="height">Reservoir Height (comma-separated numbers): example 3,5,4,5,2</label><br>
+        <input type="text" id="height" name="height"><br>
+        <button type="button" id="submit-btn">Submit</button>
+    </form>
+    <p id="result"></p>
+    <img id="plot" src="">
+    <button id="previous" onclick="location.href='/';">Home</button>
+    <button id="next" onclick="location.href='/problem4';">Next</button>
+</body>
+</html>

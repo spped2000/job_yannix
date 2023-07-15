@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Problem 4</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <h2>จับผู้ต้องสงสัย !!!</h2>
+    <form id="inputForm">
+        <label for="n">จำนวนห้อง:</label>
+        <input type="number" id="n" name="n" min="0" required>
+        <label for="suspect">Enter suspects (comma-separated):</label>
+        <textarea id="suspect" name="suspect" required></textarea>
+        <input type="submit" value="Calculate">
+    </form>
+    <br>
+    <div id="result"></div>
+    
+    <button id="previous" onclick="location.href='/';">Home</button>
+
+    <script type="text/javascript">
+        function isNumericArray(array) {
+            return array.every(function(item) {
+                return !isNaN(item);
+            });
+        }
+        
+        $('#inputForm').on('submit', function(event) {
+            event.preventDefault();
+            var n = $('#n').val();
+            var suspect = $('#suspect').val().split(',').map(Number);
+            
+            if (!isNumericArray(suspect)) {
+                $('#result').text('Please enter a comma-separated list of numbers for suspect.');
+                return;
+            }
+
+            $.ajax({
+                url: '/problem4',
+                data: JSON.stringify({"num": parseInt(n), "suspect": suspect}),
+                contentType: 'application/json',
+                type: 'POST',
+                success: function(response) {
+                    var result = response.result;
+                    $('#result').html('<p> Result: ' + result + '</p>');
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
